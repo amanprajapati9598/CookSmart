@@ -12,7 +12,7 @@ class ApiService {
       return "http://localhost$suffix";
     }
     try {
-      if (Platform.isAndroid) return "http://10.0.2.2$suffix";
+      if (Platform.isAndroid) return "http://192.168.0.199$suffix";
     } catch (_) {
       // Ignored
     }
@@ -86,7 +86,7 @@ class ApiService {
         Uri.parse("https://openrouter.ai/api/v1/chat/completions"),
         headers: {
           "Authorization": "Bearer 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",
-          "HTTP-Referer": "http://10.0.2.2",
+          "HTTP-Referer": "http://192.168.0.199",
           "X-Title": "CookSmart_Flutter_Pro",
           "Content-Type": "application/json"
         },
