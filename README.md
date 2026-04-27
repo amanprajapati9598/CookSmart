@@ -63,7 +63,6 @@ CookSmart is an intelligent, AI-powered food recipe application designed to make
 
 ## 👥 Authors
 - **Aman Prajapati**
-- **Saumya Gupta**
 
 ---
 ⭐ *If you like this project, please give it a star on GitHub!*
