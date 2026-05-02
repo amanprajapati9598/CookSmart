@@ -46,12 +46,20 @@ class MealDBService {
            
            // Fetch full details for the limited meals since filter.php only returns id and thumb
            List<Map<String, dynamic>> fullMeals = [];
-           for (var m in meals.take(limit)) {
-             final detailResponse = await http.get(Uri.parse('https://www.themealdb.com/api/json/v1/1/lookup.php?i=${m['idMeal']}'));
-             if (detailResponse.statusCode == 200) {
-               final detailData = jsonDecode(detailResponse.body);
-               if (detailData['meals'] != null) fullMeals.add(detailData['meals'][0]);
-             }
+           final futures = meals.take(limit).map((m) async {
+             try {
+               final detailResponse = await http.get(Uri.parse('https://www.themealdb.com/api/json/v1/1/lookup.php?i=${m['idMeal']}'));
+               if (detailResponse.statusCode == 200) {
+                 final detailData = jsonDecode(detailResponse.body);
+                 if (detailData['meals'] != null) return detailData['meals'][0] as Map<String, dynamic>?;
+               }
+             } catch (_) {}
+             return null;
+           });
+           
+           final results = await Future.wait(futures);
+           for (var res in results) {
+             if (res != null) fullMeals.add(res);
            }
            return fullMeals;
         }
@@ -95,7 +103,7 @@ class MealDBService {
   Future<String?> fetchWikimediaImage(String query) async {
     try {
       // Free Wikipedia image search for ANY dish globally
-      final url = Uri.parse('https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${Uri.encodeComponent(query)}&gsrlimit=1&prop=pageimages&format=json&pithumbsize=800');
+      final url = Uri.parse('https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${Uri.encodeComponent(query)}&gsrlimit=1&prop=pageimages&format=json&pithumbsize=800&origin=*');
       final response = await http.get(
         url,
         headers: {'User-Agent': 'FoodRecipeApp/1.0 (contact@example.com)'},

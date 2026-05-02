@@ -169,12 +169,27 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   Future<void> _handleBotResponse(String userText) async {
     try {
+      final geminiService = GeminiService();
+      String intentOrReply = await geminiService.getChatIntentOrReply(userText);
+      
+      if (!mounted) return;
+
+      if (intentOrReply.toUpperCase() != 'RECIPE') {
+        setState(() {
+          _isTyping = false;
+          _messages.add(ChatMessage(text: intentOrReply, isUser: false));
+        });
+        _scrollToBottom();
+        return;
+      }
+
       // Use the actual AI RecipeProvider
       await Provider.of<RecipeProvider>(context, listen: false).discoverMatches(
         query: userText,
         ingredients: [],
         diet: 'Any',
         skill: 'Any',
+        requestedLimit: 4,
       );
 
       if (!mounted) return;

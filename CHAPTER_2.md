@@ -3,9 +3,23 @@
 ## 2.1 Literature Review
 
 ### 2.1.1 Introduction to the Domain
-The domain of Food Technology and Culinary Management has evolved significantly from traditional cookbooks to advanced digital platforms. Modern applications integrate mobile computing, data management, and artificial intelligence to assist users in cooking, nutrition tracking, and inventory management.
 
-With increasing health awareness and time constraints in daily life, the demand for intelligent and efficient cooking solutions has grown rapidly. This industry has become a multi-billion dollar sector where systems aim to provide personalized experiences based on user preferences, dietary requirements, and available ingredients.
+The domain of Food Technology (FoodTech) and Digital Culinary Management represents one of the most rapidly expanding and innovative intersections of software engineering and daily human life. Historically, the culinary domain was entirely analog, relying on the oral transmission of recipes across generations or the utilization of physical, printed cookbooks. While these methods preserved culinary heritage, they were inherently rigid and static; a printed recipe could not dynamically adapt if a cook lacked a specific spice or suffered from an unexpected dietary restriction.
+
+**The Digital Culinary Evolution:**
+The initial digitization of this domain occurred during the Web 1.0 era, characterized by the emergence of static recipe repositories and blogs (e.g., AllRecipes or Food Network). These platforms digitized physical cookbooks, allowing users to search massive databases using basic keyword queries. While this vastly increased access to global cuisines, it still adhered to the restrictive "recipe-first" paradigm. The user was still burdened with the task of finding a recipe, auditing their physical kitchen inventory, and subsequently traveling to a grocery store to purchase missing items. 
+
+The subsequent Web 2.0 era introduced social integration into FoodTech. Platforms like Cookpad and Tasty gamified and socialized cooking, allowing users to upload photographs, leave reviews, and share personal variations of traditional dishes. However, despite the increased community engagement, the core technological limitation remained: these systems were fundamentally passive search engines. They could retrieve data, but they could not independently reason about it.
+
+**The Intersection of Artificial Intelligence and Gastronomy:**
+Today, the domain is undergoing its most profound disruption yet, driven by the advent of Artificial Intelligence (AI), specifically Large Language Models (LLMs) and advanced Natural Language Processing (NLP). We have entered an era of "Active Culinary Assistants." The modern FoodTech domain is no longer concerned merely with *storing* recipes; it is focused on *generating* them. By integrating mobile computing, real-time relational database management, and cloud-based AI, modern applications are bridging the gap between what a user physically owns and what they can conceptually create. 
+
+This technological leap is fundamentally altering consumer behavior. Urbanization, the rise of dual-income households, and increasingly demanding professional schedules have drastically reduced the time the average person can allocate to domestic chores like grocery shopping and meal planning. Simultaneously, there has been a massive global surge in health consciousness, with consumers demanding strict transparency regarding macronutrients, caloric intake, and allergen management. 
+
+**The Birth of the Smart Kitchen Ecosystem:**
+Consequently, the industry has evolved into a multi-billion dollar sector focused on "Smart Kitchen Ecosystems." These ecosystems aim to eliminate cognitive friction. They utilize predictive algorithms to automate grocery lists, track the expiration dates of perishable inventory, and generate hyper-personalized meals tailored to exact biometric data and real-time pantry constraints. 
+
+CookSmart is positioned directly at the bleeding edge of this domain. It encapsulates the transition from passive data retrieval to active AI generation. By addressing the critical inefficiencies of modern domestic management—namely decision fatigue, household food waste, and nutritional ignorance—CookSmart exemplifies the ultimate objective of the modern FoodTech domain: utilizing sophisticated technology to make healthy, sustainable, and enjoyable cooking accessible to everyone, regardless of their prior culinary expertise.
 
 ### 2.1.2 Review of Existing Systems / Research Papers
 

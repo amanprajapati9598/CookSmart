@@ -134,7 +134,7 @@ class _SearchScreenState extends State<SearchScreen> {
       ingredients: [],
       diet: 'Any',
       skill: 'Medium',
-      requestedLimit: 15,
+      requestedLimit: 10,
     );
     
     if (mounted) {

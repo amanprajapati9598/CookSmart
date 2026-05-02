@@ -41,7 +41,7 @@ class RecipeProvider with ChangeNotifier {
       int limit = requestedLimit ?? 30;
 
       // 1. Prioritize authentic recipes from MealDB matching the exact user input!
-      String baseSearchQuery = query.isNotEmpty ? query : (ingredients.isNotEmpty ? ingredients.first : '');
+      String baseSearchQuery = query.isNotEmpty ? query : (ingredients.isNotEmpty ? ingredients.join(' ') : '');
       
       List<Map<String, dynamic>> mealList = [];
       if (baseSearchQuery.isEmpty) {
@@ -75,13 +75,27 @@ class RecipeProvider with ChangeNotifier {
          // Find matching offline recipes
          var offlineMatches = IndianRecipesData.paneerRecipes.where((r) {
              if (checkStr.isEmpty || diet == 'Veg') return true;
+             
+             // If multiple ingredients are provided, skip offline recipes and let Gemini handle the complex combination.
+             // Offline recipes like 'Palak Paneer' require spinach which might not be in the user's fridge.
+             if (ingredients.length > 1) {
+                return false;
+             }
+             
+             if (checkStr.contains('paneer') || checkStr.contains('indian')) return true;
              return r.title.toLowerCase().contains(checkStr);
          }).toList();
          
-         // If they specifically searched for "paneer" and we want to show all paneer variants
-         if (checkStr == 'paneer') offlineMatches = IndianRecipesData.paneerRecipes;
+         // If they specifically searched for JUST "paneer" as a single ingredient or query, show all paneer variants
+         if (ingredients.length == 1 && ingredients.first.toLowerCase() == 'paneer') {
+             offlineMatches = IndianRecipesData.paneerRecipes;
+         } else if (query.toLowerCase().trim() == 'paneer') {
+             offlineMatches = IndianRecipesData.paneerRecipes;
+         }
 
-         _recipes.insertAll(0, offlineMatches);
+         if (offlineMatches.isNotEmpty) {
+             _recipes.insertAll(0, offlineMatches);
+         }
          
          // Remove duplicates and respect limit
          final uniqueTitles = <String>{};
@@ -115,7 +129,7 @@ class RecipeProvider with ChangeNotifier {
         final Set<String> usedImages = _recipes.map((r) => r.imageUrl).where((url) => url.isNotEmpty).toSet();
 
         final recipeFutures = (suggestions as List).map<Future<Recipe>>((data) {
-          return _mapGeminiToRecipe(data as Map<String, dynamic>, skill, usedImages, extractedKeyword: ingredients.isNotEmpty ? ingredients.first : query);
+          return _mapGeminiToRecipe(data as Map<String, dynamic>, skill, usedImages, extractedKeyword: ingredients.isNotEmpty ? ingredients.last : query);
         }).toList();
         
         final List<Recipe> fetchedRecipes = await Future.wait(recipeFutures);
@@ -128,7 +142,7 @@ class RecipeProvider with ChangeNotifier {
 
       } catch (geminiError) {
          if (_recipes.isEmpty) {
-            _recipes = [_createPlaceholderRecipe(baseSearchQuery, skill)];
+            throw Exception('Our Chef AI is currently busy. Please try again in a few seconds!');
          }
       }
     } catch (e) {
@@ -191,33 +205,15 @@ class RecipeProvider with ChangeNotifier {
     String uniqueKeyword = sortedWords.isNotEmpty ? sortedWords.first : (extractedKeyword ?? 'food');
     String broadTitle = titleWords.length > 1 ? titleWords.sublist(titleWords.length - 2).join(' ') : title;
 
-    // First try exact match from Wikipedia
+    // First try exact match from Wikipedia to ensure high-precision dietary accuracy
     final wikiImage = await _mealDbService.fetchWikimediaImage(title);
     if (wikiImage != null && wikiImage.isNotEmpty && !usedImages.contains(wikiImage)) {
       usedImages.add(wikiImage);
       fetchedImageUrl = wikiImage;
-    } else {
-       // Try Wikipedia with a broad 2-word title (e.g. "Paneer Tikka")
-       final wikiBroadImage = await _mealDbService.fetchWikimediaImage(broadTitle);
-       if (wikiBroadImage != null && wikiBroadImage.isNotEmpty && !usedImages.contains(wikiBroadImage)) {
-          usedImages.add(wikiBroadImage);
-          fetchedImageUrl = wikiBroadImage;
-       } else {
-          // Fallback to MealDB search using the most unique long word in the title (e.g. "Masala")
-          final mealImageUrl = await _mealDbService.fetchImageByKeyword(uniqueKeyword);
-          if (mealImageUrl != null && !usedImages.contains(mealImageUrl)) {
-             usedImages.add(mealImageUrl);
-             fetchedImageUrl = mealImageUrl;
-          } else if (extractedKeyword != null && extractedKeyword.trim().isNotEmpty) {
-             // Absolute last API fallback
-             final basicMealImageUrl = await _mealDbService.fetchImageByKeyword(extractedKeyword);
-             if (basicMealImageUrl != null && !usedImages.contains(basicMealImageUrl)) {
-                usedImages.add(basicMealImageUrl);
-                fetchedImageUrl = basicMealImageUrl;
-             }
-          }
-       }
     }
+    // If no exact match is found, we do NOT fallback to broad keywords.
+    // This prevents showing non-vegetarian images (like Mutton Biryani) for vegetarian recipes (like Paneer Biryani).
+    // The UI will correctly display 'Image not found' instead.
 
     return Recipe(
       title: title,
@@ -296,23 +292,4 @@ class RecipeProvider with ChangeNotifier {
     );
   }
 
-  // Placeholder from Gemini
-  Recipe _createPlaceholderRecipe(String suggestedName, String fallbackDifficulty) {
-    String diff = fallbackDifficulty;
-    if (diff == 'Any') diff = 'Beginner';
-
-    return Recipe(
-      title: suggestedName,
-      cookingTime: 20,
-      calories: 350,
-      matchedIngredients: 2,
-      totalIngredients: 4,
-      imageUrl: '',
-      instructions: ['AI suggestion based on your ingredients.', 'Search for this exact recipe online for detailed steps!'],
-      ingredientsList: [suggestedName],
-      missingIngredients: [],
-      substitutes: {},
-      difficulty: diff,
-    );
-  }
 }

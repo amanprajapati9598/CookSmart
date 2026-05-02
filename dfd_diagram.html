@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFD Level 1 Diagram</title>
+    <!-- Load Mermaid from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .diagram-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="diagram-container">
+        <h2>DFD Level 1: CookSmart</h2>
+        <div class="mermaid">
+        graph LR
+            User[User]
+
+            subgraph Processes
+                direction TB
+                P1((1.0<br/>Authentication))
+                P2((2.0<br/>Recipe Search<br/>& View))
+                P3((3.0<br/>Community<br/>Feed))
+                P4((4.0<br/>Pantry<br/>Tracking))
+                P5((5.0<br/>Dashboard<br/>Management))
+                
+                %% Down arrows connecting circles
+                P1 --> P2
+                P2 --> P3
+                P3 --> P4
+                P4 --> P5
+            end
+
+            D2[(D2 User DB)]
+            D3[(D3 Recipe DB)]
+            D4[(D4 Feed DB)]
+            D5[(D5 Ingredient DB)]
+            D6[(D6 Bookmark DB)]
+
+            %% Connections between User and Processes
+            User -- Login Info --> P1
+            P1 -- Verification --> User
+
+            User -- Search Queries --> P2
+            P2 -- Recipe Details / Results --> User
+
+            User -- Post Content --> P3
+            P3 -- Feed / Post Updates --> User
+
+            User -- Inventory Updates --> P4
+            P4 -- Inventory Status --> User
+
+            User -- Request Stats --> P5
+            P5 -- Profile Statistics / Analytics --> User
+
+            %% Connections between Processes and Data Stores
+            P1 <--> D2
+            P2 <--> D3
+            P3 <--> D4
+            P4 <--> D5
+            P5 <--> D6
+            P5 <--> D3
+        </div>
+        <p style="text-align: center; color: #666; font-size: 14px;"><i>Note: Use a screenshot tool (like Snipping Tool) to capture this image for your project documentation.</i></p>
+    </div>
+
+</body>
+</html>
